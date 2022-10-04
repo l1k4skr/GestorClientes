@@ -8,9 +8,7 @@ try:
         username = creds[0].rstrip()
         passw = creds[1].rstrip()
 except:
-    username = "root"
-    passw = "Andres123ful"
-    #raise Exception('Please create a creds.txt file with your username on the first line and password on the second line')
+    raise Exception('Please create a creds.txt file with your username on the first line and password on the second line')
 def main():
     root = Tk()
     application = Product(root)
