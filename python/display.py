@@ -8,7 +8,9 @@ try:
         username = creds[0].rstrip()
         passw = creds[1].rstrip()
 except:
-    raise Exception('Please create a creds.txt file with your username on the first line and password on the second line')
+    username = "root"
+    passw = "Andres123ful"
+    #raise Exception('Please create a creds.txt file with your username on the first line and password on the second line')
 def main():
     root = Tk()
     application = Product(root)
@@ -27,7 +29,7 @@ class Product:
         
         # Creating a Frame Container
         frame = LabelFrame(self.wind, text = "Register a new client")
-        frame.grid(padx=20)
+        frame.grid(padx=20, pady=20, row=0, column=0, sticky="nsew")
 
         # Name Input
         Label(frame, text = "Name: ").grid(row = 0, column = 0)
@@ -54,14 +56,19 @@ class Product:
         
         
         # Table
-        self.tree = ttk.Treeview(window, columns = ("#0", "#1", "#2", "#3"), show = "headings", height = 10)
+        self.tree = ttk.Treeview(window, columns = ("#0", "#1", "#2", "#3", "#4"), show = "headings", height = 10)
         self.tree.grid(row = 5, column = 0, pady=5, padx=5, columnspan = 2)
-        self.tree.heading("#1", text = "Name", anchor = CENTER)
-        self.tree.heading("#2", text = "Rut", anchor = CENTER)
-        self.tree.heading("#3", text = "Phone", anchor = CENTER)
-        self.tree.heading("#4", text = "Email", anchor = CENTER)
+        self.tree.heading("#1", text = "id", anchor = CENTER)
+        self.tree.heading("#2", text = "Name", anchor = CENTER)
+        self.tree.heading("#3", text = "Rut", anchor = CENTER)
+        self.tree.heading("#4", text = "Phone", anchor = CENTER)
+        self.tree.heading("#5", text = "Email", anchor = CENTER)
         
         self.displayData()
+        
+        # Button Delete Client
+        ttk.Button(self.wind , text = "Delete Client", command=self.delete_client).grid(row = 0, column= 1, sticky = W + E)
+        
         
     def send(self):
         self.name1 = self.name.get()
@@ -71,11 +78,16 @@ class Product:
         databaseconn.intro_database(self.db_,self.db_cursor,self.name1, self.rut2, self.phone3, self.email4)
         self.tree.delete(*self.tree.get_children())
         self.displayData()
+    
+    def delete_client(self):
+        databaseconn.delet_client(self.db_,self.db_cursor, self.tree.item(self.tree.selection())['values'][0])
+        self.tree.item(self.tree.focus())
+        self.tree.delete(*self.tree.get_children())
+        self.displayData()
     def displayData(self):
         self.db_cursor.execute("SELECT * FROM clientes")
         rows = self.db_cursor.fetchall()
-        for row in rows:
-            row = row[1:]
-            self.tree.insert("", 0, values = row)
+        for n, row  in enumerate(rows):
+            self.tree.insert("", 0, values = [n] + list(row))
 # if '__main__' == __name__:
 main()
